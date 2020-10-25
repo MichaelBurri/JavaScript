@@ -1,5 +1,5 @@
 class Book{    
-    constructor(title="", genre="", author=""){
+    constructor(title, genre, author){
         this.title=title;
         this.genre=genre;
         this.author=author;
@@ -11,43 +11,49 @@ class Book{
 class Booklist{
     books =[];
     static booksRead; static booksNotRead;
-    
-/*     constructor(currentBook="",nextBook="",lastBook=""){
-        this.currentBook=currentBook;
-        this.nextBook=nextBook;
-        this.lastBook=lastBook;
-    } */
-
+    currentBook; lastBook;nextBook;
     constructor(){
         this.books;
     }
 
-    addBook(book=new Book("12 Rules for Life","Psychology","Jordan B. Peterson",false)) {
+    addBook(book=new Book("12 Rules for Life","Psychology","Jordan B. Peterson")) {
         this.books.push(book);
+        if (this.books.length===1) {
+            this.currentBook=book;            
+        }
+        else{
+            if(this.nextBook===null){
+                this.nextBook=book;
+            }
+        }
     }
 
     finishCurrentBook(){
-        currentBook=books[i];
-        currentBook.read=true;
-        currentBook.readDate=new Date(Date.now());
-        this.lastBook=this.currentBook;
-        this.currentBook=this.nextBook;
-        this.nextBook=books.firstNotRead();
+        for (const i of this.books) {
+            if (i===this.currentBook){
+                this.lastBook=i;
+                i.read=true;
+                i.readDate=new Date(Date.now());
+                this.currentBook=this.nextBook;
+                this.nextBook=this.books.firstNotRead();
+            }            
+        }     
+        
     }
+
     firstNotRead(){
         for (const i of this.books) {
-            if (i.read===false) {
-                this.currentBook=i;            
+            if (i.read===false&&i!==this.currentBook) {
+               return i.title;                      
             }
         }
     }
 
     get booksRead(){
         for (let i of books) {
-            if (books===false){
+            if (i.read===true){
                 booksRead++;
-            }
-                
+            }                
         }
     }
 
