@@ -51,11 +51,28 @@ function anima(){
     if (posY3>=420||posY3<80){
         incY3*=-1;
     }
-
+    choque(bola,bola2);
+    choque(bola2,bola3);    
+    choque(bola,bola3);
 }
 
-function choque(bola1,bola2){
-    if (bola1.cx-bola2.cx-(bola1.r-bola2.r)<0){
-        
+function choque(bol1,bol2){
+    let x1=bol1.getAttribute('cx');
+    let x2=bol2.getAttribute('cx');
+    let y1=bol1.getAttribute('cy');
+    let y2=bol2.getAttribute('cy');
+    let r1=parseInt(bol1.getAttribute('r'));
+    let r2=parseInt(bol2.getAttribute('r'));
+    
+    console.log(r1+r2);
+    if (Math.sqrt(Math.pow((x2-x1),2)+Math.pow((y2-y1),2))<=(r1+r2)){
+        alert("NOICE");
     }
+    //console.log(Math.sqrt(Math.pow((x2-x1),2)+Math.pow((y2-y1),2)))
+
+
+    //Mención especial a Jesús López Pinzolas por ayudarme a sacar los vectores de colisión.
 }
+
+
+
