@@ -1,5 +1,5 @@
 window.onload=()=>{
-     
+    
     bola=document.getElementById("bola");
     bola2=document.getElementById("bola2");
     bola3=document.getElementById("bola3");
