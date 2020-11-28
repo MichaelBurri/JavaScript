@@ -1,6 +1,10 @@
 class Bola{
     constructor(){
-        
+        this.id=id;
+        this.cx=aleatorio(0,500);
+        this.cy=aleatorio(0,500);
+        this.r=aleatorio(0,50);
+        this.fill=rgb(aleatorio(0,255),aleatorio(0,255),aleatorio(0,255));
     }
 
 
