@@ -4,7 +4,7 @@
   body{
     margin: 0;
     padding: 0;
-    background-image: url(fondo1.jpg), url(fondo2.jpg);
+    /*background-image: url(fondo1.jpg), url(fondo2.jpg);*/
     background-repeat: no-repeat, no-repeat;
     background-position: left top, right top;
   }
@@ -15,14 +15,14 @@
     border-radius: 25px;
     border: 2px solid;
     color: yellow;
-    margin-right: 20%;
+    margin-right: 40%;
   }
   svg{
     margin-top: 2VW;
     margin-left: 200px;
     margin-right: 20%;
     border: 2px solid black;
-    background-image: url(ruski.png);
+    /*background-image: url(ruski.png);*/
     background-repeat: no-repeat;
   }
 
@@ -41,5 +41,5 @@
     text-decoration: none;
     text-shadow: 1px 1px 1px #2f6627;
     text-align: center;
-    margin-left: 40vw;
+    margin-left: 20vw;
 }
