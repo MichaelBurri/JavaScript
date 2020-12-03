@@ -55,52 +55,16 @@ class Tetris{
         this.svg.setAttribute("id","svg");
         element.appendChild(this.svg);
 
-        this.tablero=crearMatriz(DIMX,DIMY);
+        this.tablero=crearMatriz(DIMX,DIMY+1);
+        
         
 
     }  
 
-    puedeMoverX(){        
-
-    }
-
-    puedeMoverY(){
-        for (let i = piezas.length-1; i > piezas.length-5; i--) {
-            return(!(piezas[i].puedeY===false))            
-        }
-    }
-
-    detectarMovY(){
-        for (let i = piezas.length-5; i >= 0; i--) {
-            return(!(piezas[i].puedeY===false))            
-        }
-    }
-    
-    borrarPiezas(){
-        let sw;
-        for (let i = 0; i < this.tablero.length; i++) {
-            sw=true;
-            for (let j = 0; j < this.tablero[0].length; j++) {                
-                if (this.tablero[i][j]!==1){                    
-                    sw=false;
-                }              
-            }
-            if(sw===true){                
-                for (let k = piezas.length-1; k >= 0; k--){
-                    if(piezas[k].y===ALTO*i){                        
-                        piezas.splice(k,1);                        
-                        }
-                    }                    
-                } 
-                sw=false;               
-            } 
-    }
-    
-
     //Creador de Piezas.
     crearPiezaAleatoria(){
         //Pieza aleatoria 
-        let piezaTipo=aleatorio(0,2);
+        let piezaTipo=aleatorio(0,5);
         //Color aleatorio 
         let piezaColor=piezasColor[aleatorio(0,5)];
         //Coordenadas x e y de cada rectangulo según la pieza.
@@ -148,7 +112,8 @@ class Tetris{
     }
 
     actualizarMatrix(){
-        this.tablero=crearMatriz(DIMX,DIMY);
+        this.tablero=crearMatriz(DIMX,DIMY+1);
+        this.tablero[14]=[1,1,1,1,1,1,1,1,1];
         let x,y;   
         for (let i = 0; i < this.tablero.length; i++) {
             for (let j = 0; j <this.tablero[0].length; j++) {
@@ -156,11 +121,51 @@ class Tetris{
                     x=piezas[k].x/ANCHO;y=piezas[k].y/ALTO;                   
                     if (x===j&&y===i) {
                         this.tablero[i][j]=1;
+                        if(k===piezas.length-1||k===piezas.length-2||k===piezas.length-3||k===piezas.length-4){
+                            this.tablero[i][j]=2;
+                        }
                     }                    
                 }   
             }                
         } 
     }
+
+    puedeMoverX(){        
+
+    }
+
+    puedeMoverY(){
+        let sw=true;
+        for (let i = piezas.length-1; i > piezas.length-5; i--) {
+            if(piezas[i].puedeY!==true){
+                sw=false;
+            }           
+        }
+        return sw;
+    }
+    
+    borrarPiezas(){
+        let sw;
+        for (let i = 0; i < this.tablero.length; i++) {
+            sw=true;
+            for (let j = 0; j < this.tablero[0].length; j++) {                
+                if (this.tablero[i][j]!==1){                    
+                    sw=false;
+                }              
+            }
+            if(sw===true){                
+                for (let k = piezas.length-1; k >= 0; k--){
+                    if(piezas[k].y===ALTO*i){                        
+                        piezas.splice(k,1);                        
+                        }
+                    }                    
+                } 
+                sw=false;               
+            } 
+    }
+       
+
+    
 
     moverPiezaY(){
         for (let i = 0; i < 4; i++) {
@@ -177,7 +182,7 @@ class Tetris{
 
     moverPiezasY(){
         for (let i = piezas.length-5; i >= 0 ; i--) {
-            piezas[i].moverY();            
+            piezas[i].moverY();                            
         } 
     }
 
@@ -187,11 +192,22 @@ class Tetris{
                 if(this.tablero[piezas[j].y/ALTO+1][piezas[j].x/ANCHO]===1){
                     piezas[j].puedeY=false;
                 }
+                else{
+                    piezas[j].puedeY=true;
+                }
             }
         }
     }
 
-    masacre(){        
+    limiteY(){
+        for (let i = piezas.length-1; i >= 0; i--){
+            if(piezas[i].y/ALTO>=DIMY-1){
+                piezas[i].puedeY=false;
+            }
+        }
+    }
+
+    eliminarRect(){        
         for (let i = 0; i < piezas.length; i++) {
             piezas[i].rect.parentElement.removeChild(piezas[i].rect);            
         }
@@ -205,24 +221,20 @@ class Tetris{
         
         this.dibujarPiezas(); 
         this.actualizarMatrix();       
-        this.masacre();
+        this.eliminarRect();
         this.borrarPiezas();        
         this.actualizarMatrix();        
         this.dibujarPiezas();
         
-        if(cont%100===0||!this.puedeMoverY()){
+        if(cont===0||!this.puedeMoverY()){
             this.crearPiezaAleatoria();
         }
         cont++;
-        this.detectarColY();
+        this.detectarColY();this.limiteY();
         this.actualizarMatrix();
+
         if(this.puedeMoverY()&&cont%10===0)
             this.moverPiezaY();
-        /* if(this.detectarMovY()&&cont%10===0){
-            this.moverPiezasY();
-        } */
-        
-        
 
     }
 }
@@ -246,15 +258,6 @@ function aleatorio(num1,num2){
     return parseInt(Math.random()*(num2-num1)+num1);
 }
 
-function evaluarArray0(array){
-    for (let i = 0; i < DIMX; i++) {
-        if(array[i]!==0){
-            return false
-        }        
-    }
-    return true;
-}
-
 
 //--------------------------------------------------
 //INICIO JUEGO
@@ -262,11 +265,6 @@ let element=document.getElementById('div');
 tetris=new Tetris(element);
 
 window.setInterval( () => {tetris.main();}, 100);
-
- for (let i = 0; i < 8; i++) {
-    piezas.push(new Rectangulo('red',ANCHO*i,13*ALTO))
-    
-}
 
 window.addEventListener('keydown', (e) =>{
     if(e.key==='d'){
