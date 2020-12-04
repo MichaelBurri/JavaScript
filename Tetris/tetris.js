@@ -2,8 +2,8 @@
 var piezas=[];
 var cont=0;
 var piezasColor=["red","yellow","blue","green","purple"];
-const ANCHO=25;const ALTO=25;
-const DIMX=9;const DIMY=14;
+const ANCHO=50;const ALTO=50;
+const DIMX=10;const DIMY=14;
 //-----------------------------------------------------------
 //CLASE RECTANGULO.
 class Rectangulo{    
@@ -60,6 +60,8 @@ class Tetris{
         this.piezaActual="O";
         this.az=1;
 
+        this.score=0;
+        this.GO=false;
     }  
 
     //Creador de Piezas.
@@ -148,12 +150,17 @@ class Tetris{
             if(sw===true){                
                 for (let k = piezas.length-1; k >= 0; k--){
                     if(piezas[k].y===ALTO*i){                        
-                        piezas.splice(k,1);                        
+                        piezas.splice(k,1); 
+                        this.score+=10;                       
                         }
                     }                    
                 } 
                 sw=false;               
             } 
+    }
+
+    actualizarScore(){
+        document.getElementById('Score').innerHTML='SCORE: '+this.score;
     }
 
     moverPiezaX(sentido){
@@ -369,8 +376,15 @@ class Tetris{
     }
 
     gameOver(){
-        if(!this.puedeMoverY()&&!esArray0(this.tablero[0])){
-            alert("GG but not GG")
+        if(!this.puedeMoverY()&&!esArray0(this.tablero[0])&&!this.GO)
+        {
+            this.svg.remove();
+            let pantallaGO = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            pantallaGO.setAttribute("width", 703);
+            pantallaGO.setAttribute("height", 355);
+            pantallaGO.setAttribute("id","GO");
+            document.getElementById('div').appendChild(pantallaGO);
+            this.GO=true;
         }
     }
 
@@ -392,18 +406,19 @@ class Tetris{
         this.dibujarPiezas(); 
         this.actualizarMatrix();       
         this.eliminarRect();
-        this.borrarPiezas();        
+        this.borrarPiezas(); 
+        this.actualizarScore();       
         this.actualizarMatrix();        
         this.dibujarPiezas();
         
-        if(cont===0||!this.puedeMoverY()){
+        if((cont===0||!this.puedeMoverY())&&!this.GO){
             this.crearPiezaAleatoria();
         }
         cont++;
         this.detectarColY();this.limiteY();this.detectarColX();this.limiteX();
         this.actualizarMatrix();
 
-        if(this.puedeMoverY()&&cont%10===0){
+        if(this.puedeMoverY()&&cont%100===0){
             this.lineaRellena();
             this.moverPiezaY();
             
@@ -445,10 +460,13 @@ function esArray0(array){
 
 //--------------------------------------------------
 //INICIO JUEGO
-let element=document.getElementById('div');
-tetris=new Tetris(element);
+//document.getElementById('start').addEventListener('click', (e) =>{    
+//});
 
-window.setInterval( () => {tetris.main();}, 100);
+let element=document.getElementById('div');
+    tetris=new Tetris(element);
+
+    window.setInterval( () => {tetris.main();}, 10);
 
 window.addEventListener('keydown', (e) =>{
     if(e.key==='d'&&tetris.puedeMoverDer()){
@@ -465,29 +483,3 @@ window.addEventListener('keydown', (e) =>{
     }  
 });
 //-----------------------------------------------------
-
-/* for (let i = 0; i < 8; i++) {
-    piezas.push(new Rectangulo("white",i*ANCHO,10*ALTO));
-    
-} */
-
-
-
-
-
-//-------------------------------------------------
-/*
-KeyA
-KeyS
-Space
-//tetris.dibujarPiezas();
-
-/*window.addeventlistener(){
-    if D
-        console log (D)
-        (tetris.cont=1  )
-window.addeventlisetene
-    A consolelog A
-SPACE
-S
-}*/
