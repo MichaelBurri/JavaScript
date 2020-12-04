@@ -12,7 +12,8 @@ class Rectangulo{
         this.x = x;
         this.y = y;        
         this.alto=ALTO;this.ancho=ANCHO;
-        this.puedeX=true;
+        this.puedeDer=true;
+        this.puedeIzq=true;
         this.puedeY=true;
 
         this.rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");                       
@@ -24,24 +25,10 @@ class Rectangulo{
         this.rect.setAttributeNS(null, "height", this.ancho);
         this.rect.setAttributeNS(null, "width",this.alto);
         this.rect.setAttributeNS(null, "fill", this.color);
-        this.rect.setAttributeNS(null, "stroke","black")
-
+        this.rect.setAttributeNS(null, "stroke","black");
 
         document.getElementById("svg").appendChild(this.rect);
          
-    }
-
-    moverX(n){
-        if (n<0) {
-            this.x-=this.ancho;             
-        }
-        else if(n>0){
-            this.x+=this.ancho;            
-        }
-    }
-
-    moverY(){
-        this.y+=this.alto;  
     }
 }
 
@@ -55,9 +42,7 @@ class Tetris{
         this.svg.setAttribute("id","svg");
         element.appendChild(this.svg);
 
-        this.tablero=crearMatriz(DIMX,DIMY+1);
-        
-        
+        this.tablero=crearMatriz(DIMX,DIMY+1);    
 
     }  
 
@@ -130,20 +115,6 @@ class Tetris{
         } 
     }
 
-    puedeMoverX(){        
-
-    }
-
-    puedeMoverY(){
-        let sw=true;
-        for (let i = piezas.length-1; i > piezas.length-5; i--) {
-            if(piezas[i].puedeY!==true){
-                sw=false;
-            }           
-        }
-        return sw;
-    }
-    
     borrarPiezas(){
         let sw;
         for (let i = 0; i < this.tablero.length; i++) {
@@ -163,16 +134,6 @@ class Tetris{
                 sw=false;               
             } 
     }
-       
-
-    
-
-    moverPiezaY(){
-        for (let i = 0; i < 4; i++) {
-            piezas[piezas.length-(i+1)].moverY()            
-        } 
-        
-    }
 
     moverPiezaX(sentido){
         for (let i = 0; i < 4; i++) {
@@ -180,10 +141,71 @@ class Tetris{
         } 
     }
 
+    puedeMoverIzq(){        
+        let sw=true;
+        for (let i = piezas.length-1; i > piezas.length-5; i--) {
+            if(piezas[i].puedeIzq!==true){
+                sw=false;
+            }           
+        }
+        return sw;
+    }
+
+    puedeMoverDer(){        
+        let sw=true;
+        for (let i = piezas.length-1; i > piezas.length-5; i--) {
+            if(piezas[i].puedeDer!==true){
+                sw=false;
+            }           
+        }
+        return sw;
+    }
+
+    moverPiezaY(){
+        for (let i = 0; i < 4; i++) {
+            piezas[piezas.length-(i+1)].moverY()            
+        } 
+        
+    }    
+
     moverPiezasY(){
         for (let i = piezas.length-5; i >= 0 ; i--) {
             piezas[i].moverY();                            
         } 
+    }
+
+    puedeMoverY(){
+        let sw=true;
+        for (let i = piezas.length-1; i > piezas.length-5; i--) {
+            if(piezas[i].puedeY!==true){
+                sw=false;
+            }           
+        }
+        return sw;
+    }
+
+    detectarColX(){
+        for (let i = this.tablero.length-2; i > 1; i--){            
+            for (let j = piezas.length-1; j > piezas.length-5 ; j--){
+                if(this.tablero[piezas[j].y/ALTO][piezas[j].x/ANCHO+1]===1){
+                    piezas[j].puedeDer=false;
+                }
+                else{
+                    piezas[j].puedeDer=true;
+                }
+            }
+        }
+
+        for (let i = this.tablero.length-2; i > 1; i--){            
+            for (let j = piezas.length-1; j > piezas.length-5 ; j--){
+                if(this.tablero[piezas[j].y/ALTO][piezas[j].x/ANCHO-1]===1){
+                    piezas[j].puedeIzq=false;
+                }
+                else{
+                    piezas[j].puedeIzq=true;
+                }
+            }
+        }
     }
 
     detectarColY(){
@@ -203,6 +225,17 @@ class Tetris{
         for (let i = piezas.length-1; i >= 0; i--){
             if(piezas[i].y/ALTO>=DIMY-1){
                 piezas[i].puedeY=false;
+            }
+        }
+    }
+
+    limiteX(){
+        for (let i = piezas.length-1; i >= 0; i--){
+            if(piezas[i].x/ANCHO>=DIMX-1){
+                piezas[i].puedeDer=false;
+            }
+            if(piezas[i].x/ANCHO<=0){
+                piezas[i].puedeIzq=false;
             }
         }
     }
@@ -230,7 +263,7 @@ class Tetris{
             this.crearPiezaAleatoria();
         }
         cont++;
-        this.detectarColY();this.limiteY();
+        this.detectarColY();this.limiteY();this.detectarColX();this.limiteX();
         this.actualizarMatrix();
 
         if(this.puedeMoverY()&&cont%10===0)
@@ -267,18 +300,19 @@ tetris=new Tetris(element);
 window.setInterval( () => {tetris.main();}, 100);
 
 window.addEventListener('keydown', (e) =>{
-    if(e.key==='d'){
+    if(e.key==='d'&&tetris.puedeMoverDer()){
         tetris.moverPiezaX(1);
     }
-    else if(e.key==='a'){
+    else if(e.key==='a'&&tetris.puedeMoverIzq()){
         tetris.moverPiezaX(-1);
     }
     else if(e.key==='s'){
         tetris.moverPiezaY();
     }
-    /* else if(e.key==='space'){
-        tetris.girar();
-    } */
+    /* else if(e.key===' '){
+        //tetris.girar();
+        console.log("YASS SPACE");
+    } */ 
 });
 //-----------------------------------------------------
 
