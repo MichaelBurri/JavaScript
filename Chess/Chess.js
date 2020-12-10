@@ -1,22 +1,48 @@
-function main() {
-    var tabla="";
-    tabla+="<table style='border-collapse: collapse;border: 1px solid black;border-spacing: 0px;'>";
-    for (let i = 0; i < 8; i++) {
-       tabla+="<tr style='border-collapse: collapse;border: 1px solid black'>";
-       for (let j = 0; j < 8; j++) {
-           var id=(i+1)+""+(j+1);
-           if ((i+j)%2===0) {
-            tabla+="<td id="+id+" style='border-collapse: collapse;border: 1px solid black;padding: 0px; margin: 0px;'><img src='Black.png' alt='Black' style='display:block;' width='100%'></img></td>";
-           }
-           else if((i+j)%2===1){
-            tabla+="<td style='border-collapse: collapse;border: 1px solid black;padding: 0px; margin: 0px;'><img src='White.png' alt='White' style='display: block' width='100%'></img></td>";
-           }
-           //tabla+="<td style='border-collapse: collapse;border: 1px solid black'><img src='Q.png' alt='Queen' width='100' heigth='100%'></img></td>";       
-       }     
-       tabla+="</tr>"; 
+ANCHO=50;
+class Pieza{
+    constructor(pieza,color,fondo){
+        this.pieza=pieza;
+        this.color=color;
+        this.fondo=fondo;
+
+        var x = document.createElement("IMG");
+        x.setAttribute("src", pieza+color+fondo+'.png');
+        x.setAttribute("width", ANCHO);
+        x.setAttribute("height", ANCHO);
+        x.setAttribute("alt", pieza+color+fondo);
+        document.getElementById('div').appendChild(x);
+
     }
-    tabla+="</table>";
-    document.write(tabla);
 }
-//
-main();
+
+class Ajedrez{
+    contructor(element){
+        this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        this.svg.setAttribute("width", 8*ANCHO);
+        this.svg.setAttribute("height", 8*ANCHO);
+        this.svg.setAttribute("id","svg");
+        element.appendChild(this.svg);
+        
+        this.tablero=crearMatriz(8,8);
+    }
+
+    crearTablero(){
+        this.tablero[0][0]='TNB';
+        this.tablero[0][1]
+    }
+}
+
+//FUNCIONES AUXILIARES
+function crearMatriz(ancho, alto){
+    let m=[];
+
+    for (let i = 0; i < alto; i++) {
+        m[i]=[];
+        for (let j = 0; j < ancho; j++) {
+            m[i][j]=0;        
+        }    
+    }
+    return m;
+}
+
+new Pieza('Q','B','B');
