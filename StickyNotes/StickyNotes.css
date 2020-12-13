@@ -6,7 +6,7 @@
 .mainDiv{
   background-color: red;
   width: 100%;
-  height: 500px;
+  height: 100vh;
   padding: 23px;
 }  
 .noteDiv{
@@ -18,7 +18,7 @@
   float: left;
 }
 .noteDiv>button{
-  margin-left: 20%;
+  margin-left: 3em;
 }
 .bDel{
   background-color: coral;
