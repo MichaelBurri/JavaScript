@@ -1,0 +1,1 @@
+Añadir eventos a elementos al crearlos en el constructor. good or bad?

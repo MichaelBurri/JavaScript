@@ -21,30 +21,47 @@ class NoteView{
         this.mainDiv.className="mainDiv";
         document.body.appendChild(this.mainDiv);
     }
-    paintNote(note=new Note()){
-        var n=note;
+    paintNote(note=new Note()){ 
+        //<div> representing the note       
         let noteDiv=document.createElement('div');
         noteDiv.className="noteDiv";
         noteDiv.id=note.id;
+        //title
         let noteH1=document.createElement('h1');
         noteH1.innerHTML=note.title;
+        noteH1.id='h1'+note.id;
+        noteH1.contentEditable=false;
+        //body of the message
         let noteTA=document.createElement('textarea');
+        noteTA.id='TA'+note.id;
         noteTA.innerHTML=note.text;
+        noteTA.readOnly=true;
+        //date of creation
         let noteP=document.createElement('p');
         noteP.innerHTML=note.date;
+        //some buttons
+        //edit
         let noteB1=document.createElement('button');
         noteB1.innerHTML='Edit';
         noteB1.className='bEdit';
-        noteB1.id='bEdit'+note.id;
+        noteB1.id='bEdit'+note.id;        
+        //delete
         let noteB2=document.createElement('button');
         noteB2.innerHTML='Delete';
         noteB2.className='bDel';
         noteB2.id='bDel'+note.id;
-        
+        //save
+        let noteB3=document.createElement('button');
+        noteB3.innerHTML='Save';
+        noteB3.className='bSave';
+        noteB3.id='bSave'+note.id;
+        noteB3.disabled=true;
+
         noteDiv.appendChild(noteH1);
         noteDiv.appendChild(noteTA);
         noteDiv.appendChild(noteP); 
-        noteDiv.appendChild(noteB1);  
+        noteDiv.appendChild(noteB1);
+        noteDiv.appendChild(noteB3);  
         noteDiv.appendChild(noteB2);   
 
         this.mainDiv.appendChild(noteDiv);
@@ -64,11 +81,25 @@ class Controller{
     constructor(){
         this.arrNotes=[];
         this.view=new NoteView();
+
+        document.getElementById('bNew').addEventListener('click',(e)=>{
+            this.createNote('Title','Write something here...')
+        }
+        );
     }
     createNote(title, text){
         let note=new Note(title,text);
         this.arrNotes.push(note);
         this.view.paintNote(note);
+        this.addEvents(note.id);
+    }
+    paintAllNotes(){
+        this.arrNotes.forEach(e => {
+            this.view.deleteNote(e);            
+        });
+        this.arrNotes.forEach(e => {
+            this.view.paintNote(e);            
+        });
     }
     deleteNote(id){ 
         this.arrNotes.forEach((note,index)=>{
@@ -77,56 +108,54 @@ class Controller{
                 this.view.deleteNote(note);
             }
         })
-    }
-    addEvents(){
-        this.quitEvents();
-        let newButton=document.getElementById('bNew');
-        newButton.addEventListener('click',(e)=>{
-        this.createNote('Title','Write something here...')});
+    }  
 
-        let bDels=document.getElementsByClassName('bDel');
-        var myEvent = function (e) {
-            console.log('NOice');
-        };
-       
-        for (let i = 0; i < bDels.length; i++) {   
-            bDels[i].removeEventListener('click',myEvent);        
-            bDels[i].addEventListener('click',myEvent);
-        }
-            
-        
-        
-
-        /* let editButton=document.getElementById('bEdit');
-        editButton.addEventListener('click',(e)=>{
-           this.editNote(editButton.parentElement.id,) 
-        }
-        )
-        ; */
-    }
-
-    quitEvents(){
-        var elems = document.body.getElementsByTagName("*");
-        for (let i = 0; i < elems.length; i++) {
-            //elems[i].removeEventListener();
-            
-        }
-    }
-    editNote(id,title,text){   //como averiguar el id clicando, y como averiguar el title y el text nuevo     
+    saveNote(id){   //como averiguar el id clicando, y como averiguar el title y el text nuevo     
         this.arrNotes.forEach((note)=>{
             if(note.id==id){
+                let newText=document.getElementById('TA'+id).value;
+                let newTitle=document.getElementById('h1'+id).innerHTML;
+                //note.title=title;               
                 this.view.deleteNote(note);
-                note.title=title;
-                note.text=text;
-                this.view.paintNote(note)
+                note.text=newText;
+                note.title=newTitle;
+                this.paintAllNotes();
+                this.addEvents(note.id);
             }
         })  
+    }
+
+    addEvents(id){  
+        document.getElementById('bDel'+id).addEventListener(
+            "click",(e)=>{
+                this.deleteNote(id);
+            }
+        )
+
+        document.getElementById('bEdit'+id).addEventListener(
+            "click",(e)=>{
+                document.getElementById('bSave'+id).disabled=false;
+                document.getElementById('bEdit'+id).disabled=true;
+                document.getElementById('h1'+id).contentEditable=true;
+                document.getElementById('TA'+id).readOnly=false;
+            }
+        )
+
+        document.getElementById('bSave'+id).addEventListener(
+            "click",(e)=>{
+                this.saveNote(id);
+                document.getElementById('bSave'+id).disabled=true;
+                document.getElementById('bEdit'+id).disabled=false;
+                document.getElementById('h1'+id).contentEditable=false;
+                document.getElementById('TA'+id).readOnly=true;
+            }
+        )
     }
 }
 let c=new Controller();
 //c.createNote('MIGUEL','JAJAJA');
-c.addEvents();
-window.setInterval( () => {c.addEvents()}, 1000);
+//c.addEvents();
+//window.setInterval( () => {c.addEvents()}, 1000);
 
 /*
 En ella debes permitir:
