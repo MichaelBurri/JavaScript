@@ -3,13 +3,15 @@ class Note{
         this.title=title;
         this.text=text;        
         this.time=new Date();
-        if(time!=null)
+        if(time!=null){
             this.time=new Date(time);
+        }            
         this.date=this.time.toDateString()+" "+this.time.toLocaleTimeString();
         this.createdAgo='Created 0 minutes ago';
         this.id=this.time.getTime().toString();
-        if(id!=null)
+        if(id!=null){
             this.id=id;
+        }           
     }   
 }
 
@@ -17,7 +19,7 @@ class NoteView{
     constructor(){
         let header=document.createElement('header');
         let newButton=document.createElement('button');
-        newButton.innerHTML='New Note';
+        newButton.innerHTML='New Note +';
         newButton.id='bNew';
         document.body.appendChild(header);
         header.appendChild(newButton);
@@ -46,6 +48,7 @@ class NoteView{
         //time since creation
         let noteP2=document.createElement('p');
         noteP2.innerHTML=note.createdAgo;
+        noteP2.id='p2'+note.id;
         //some buttons
         //edit
         let noteB1=document.createElement('button');
@@ -89,11 +92,28 @@ class Controller{
     constructor(){
         this.arrNotes=[];
         this.view=new NoteView();
-
+        this.drag=false;
         document.getElementById('bNew').addEventListener('click',(e)=>{
             this.createNote('Title','Write something here...')
-        }
+        }        
         );
+        
+        this.view.mainDiv.addEventListener("mousedown",(e)=>{
+            var target=e.target;
+            this.drag=!this.drag;
+            if (target.className=='noteDiv') {
+                
+                window.addEventListener('mousemove',(e)=>{
+                    if (this.drag) {
+                        this.moveNote(target.id,e.x,e.y);
+                        console.log(e.x," ",e.y);
+                    }                    
+                })
+            }
+        })
+        this.view.mainDiv.addEventListener("mouseup",()=>{            
+            this.drag=false; 
+        });
     }
     createNote(title, text, time, id,save=true){
         let note=new Note(title,text,time,id);
@@ -164,11 +184,19 @@ class Controller{
             }
         )
     }
+
+    moveNote(id,x,y){
+        let note=document.getElementById(id);
+        note.style.position='absolute';
+        note.style.left=x+'px';
+        note.style.top=y+'px';
+    }
+
     checkTime(){
         let timeNow=new Date();
         for (let i = 0; i < this.arrNotes.length; i++) {
             this.arrNotes[i].createdAgo='Created '+Math.floor((timeNow-this.arrNotes[i].time)/60000)+' minutes ago';
-            
+            document.getElementById('p2'+this.arrNotes[i].id).innerHTML=this.arrNotes[i].createdAgo;
         }
         
     }
@@ -186,17 +214,15 @@ class Controller{
 
 }
 
-   
+   const c =new Controller();
 window.addEventListener('load', () => {
-    const c =new Controller();
+    
     c.loadNotes();
-    c.checkTime();
-    c.paintAllNotes();
+    c.checkTime();   
     
     setInterval(() => {
-        c.checkTime(); 
-        c.paintAllNotes();       
-    }, 60000); 
+        c.checkTime();               
+    }, 1000); 
     
 });
 

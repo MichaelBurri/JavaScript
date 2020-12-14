@@ -1,24 +1,31 @@
-.vl {
-    border-left: 6px solid green;
-    height: 500px;
-    margin-left: 400px;
-  }
 .mainDiv{
-  background-color: red;
+  background-image: url(cork.jpg);
   width: 100%;
   height: 100vh;
   padding: 23px;
+  position: relative;
 }  
 .noteDiv{
-  background-color: blue;
+  background-color: lemonchiffon;
   width: 300px;
   margin-top: 15px;
   margin-left: 15px;
   padding: 5px;
-  float: left;
+  display: inline-block;
+  
 }
 .noteDiv>button{
   margin-left: 3em;
+}
+#bNew{
+  background-color: goldenrod;
+  color: darkred;
+  width: 200px;
+  height: 100px;
+  font-size: xx-large;
+  font-family:"Times New Roman", Times, serif;
+  padding: 5px;
+  margin: 2px;
 }
 .bDel{
   background-color: coral;
@@ -36,29 +43,13 @@ textarea{
 h1{
   font-size: 27px;
   margin-left: 3rem;
-  padding-top: 30px;
+  padding-top: 10px;
 }
 header{
   width: 100%;
   height: 100px;
-  background-color: chocolate;
+  background-color: lawngreen;
 }
 p{
   margin-left: 54px;
 }
-
-/*
-    <textarea readOnly="false" style="position: static;resize: none;">TEXTAREA</textarea>
-    <div style="width: 100%;height: 100rem;background-color: red;">DIV
-       
-        <ul>
-            <li style="position: absolute;margin-top: 20%;margin-left: 30%;list-style: none;">
-                <textarea name="nom" id="2" cols="30" rows="10" style="width: fit-content;height: fit-content;"></textarea>
-            </li>
-            <li></li>
-        </ul>
-        <textarea name="y" id="1" cols="30" rows="10" style="position: absolute;margin-top: 20%;">textarea</textarea>
-        <button style="position: absolute;margin-top: 500px;">BOTON</button>
-    </div>
-    document.getElementsByTagName('textarea')[0].style.marginLeft='500px'
-*/
