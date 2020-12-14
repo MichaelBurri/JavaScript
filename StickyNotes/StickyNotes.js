@@ -1,11 +1,15 @@
 class Note{
-    constructor(title='Title', text='Text'){
+    constructor(title='Title', text='Text',time,id){
         this.title=title;
-        this.text=text;
-        let time=new Date();
-        this.date=time.toDateString()+" "+time.toLocaleTimeString();
+        this.text=text;        
+        this.time=new Date();
+        if(time!=null)
+            this.time=new Date(time);
+        this.date=this.time.toDateString()+" "+this.time.toLocaleTimeString();
         this.createdAgo='Created 0 minutes ago';
-        this.id=time.getTime().toString();
+        this.id=this.time.getTime().toString();
+        if(id!=null)
+            this.id=id;
     }   
 }
 
@@ -87,11 +91,15 @@ class Controller{
         }
         );
     }
-    createNote(title, text){
-        let note=new Note(title,text);
+    createNote(title, text, time, id,save=true){
+        let note=new Note(title,text,time,id);
         this.arrNotes.push(note);
         this.view.paintNote(note);
         this.addEvents(note.id);
+
+        if (save) {
+            this.saveNotes();
+        }
     }
     paintAllNotes(){
         this.arrNotes.forEach(e => {
@@ -108,6 +116,7 @@ class Controller{
                 this.view.deleteNote(note);
             }
         })
+        this.saveNotes()
     }  
 
     saveNote(id){   //como averiguar el id clicando, y como averiguar el title y el text nuevo     
@@ -122,7 +131,8 @@ class Controller{
                 this.paintAllNotes();
                 this.addEvents(note.id);
             }
-        })  
+        }) 
+        this.saveNotes(); 
     }
 
     addEvents(id){  
@@ -151,8 +161,28 @@ class Controller{
             }
         )
     }
+
+    saveNotes() {
+        localStorage.stickyNotes = JSON.stringify(this.arrNotes);
+    }
+
+    loadNotes(){
+        if (localStorage.stickyNotes) {
+            for(let note of JSON.parse(localStorage.stickyNotes))
+                this.createNote(note.title,note.text,note.time,note.id,false);
+            
+        }
+    }
+
 }
-let c=new Controller();
+
+   
+window.addEventListener('load', () => {
+    const c =new Controller();
+    c.loadNotes();
+});
+
+
 //c.createNote('MIGUEL','JAJAJA');
 //c.addEvents();
 //window.setInterval( () => {c.addEvents()}, 1000);
@@ -180,6 +210,3 @@ https://www.mystickies.com/
 https://noteapp.com/lyRpT37g0r*/
 
 
-/*
-Hacer nota editable. document.getElementsByTagName('TextArea')[0].removeAttribute('readonly')
-*/
