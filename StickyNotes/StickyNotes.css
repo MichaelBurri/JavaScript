@@ -11,7 +11,7 @@
 }  
 .noteDiv{
   background-color: blue;
-  width: 400px;
+  width: 300px;
   margin-top: 15px;
   margin-left: 15px;
   padding: 5px;
@@ -24,13 +24,14 @@
   background-color: coral;
 }
 textarea{ 
+  -webkit-box-sizing: border-box;
+  box-sizing:border-box;
   font-family:"Times New Roman", Times, serif;  
   font-size: 18px;
   margin-left: 3em;  
-  width: 15em;
-  height: 10em; 
+  
+  height: 3em; 
   resize: none; 
-  overflow: auto;
 }
 h1{
   font-size: 27px;

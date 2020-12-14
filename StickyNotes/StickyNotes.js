@@ -43,6 +43,9 @@ class NoteView{
         //date of creation
         let noteP=document.createElement('p');
         noteP.innerHTML=note.date;
+        //time since creation
+        let noteP2=document.createElement('p');
+        noteP2.innerHTML=note.createdAgo;
         //some buttons
         //edit
         let noteB1=document.createElement('button');
@@ -64,6 +67,7 @@ class NoteView{
         noteDiv.appendChild(noteH1);
         noteDiv.appendChild(noteTA);
         noteDiv.appendChild(noteP); 
+        noteDiv.appendChild(noteP2);
         noteDiv.appendChild(noteB1);
         noteDiv.appendChild(noteB3);  
         noteDiv.appendChild(noteB2);   
@@ -106,7 +110,8 @@ class Controller{
             this.view.deleteNote(e);            
         });
         this.arrNotes.forEach(e => {
-            this.view.paintNote(e);            
+            this.view.paintNote(e);
+            this.addEvents(e.id);            
         });
     }
     deleteNote(id){ 
@@ -116,25 +121,23 @@ class Controller{
                 this.view.deleteNote(note);
             }
         })
-        this.saveNotes()
+        this.saveNotes();
     }  
-
-    saveNote(id){   //como averiguar el id clicando, y como averiguar el title y el text nuevo     
+    saveNote(id){     
         this.arrNotes.forEach((note)=>{
             if(note.id==id){
                 let newText=document.getElementById('TA'+id).value;
                 let newTitle=document.getElementById('h1'+id).innerHTML;
-                //note.title=title;               
+                             
                 this.view.deleteNote(note);
                 note.text=newText;
                 note.title=newTitle;
                 this.paintAllNotes();
-                this.addEvents(note.id);
+                
             }
         }) 
         this.saveNotes(); 
     }
-
     addEvents(id){  
         document.getElementById('bDel'+id).addEventListener(
             "click",(e)=>{
@@ -161,7 +164,14 @@ class Controller{
             }
         )
     }
-
+    checkTime(){
+        let timeNow=new Date();
+        for (let i = 0; i < this.arrNotes.length; i++) {
+            this.arrNotes[i].createdAgo='Created '+Math.floor((timeNow-this.arrNotes[i].time)/60000)+' minutes ago';
+            
+        }
+        
+    }
     saveNotes() {
         localStorage.stickyNotes = JSON.stringify(this.arrNotes);
     }
@@ -180,6 +190,14 @@ class Controller{
 window.addEventListener('load', () => {
     const c =new Controller();
     c.loadNotes();
+    c.checkTime();
+    c.paintAllNotes();
+    
+    setInterval(() => {
+        c.checkTime(); 
+        c.paintAllNotes();       
+    }, 60000); 
+    
 });
 
 
