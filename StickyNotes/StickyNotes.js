@@ -11,7 +11,8 @@ class Note{
         this.id=this.time.getTime().toString();
         if(id!=null){
             this.id=id;
-        }           
+        }   
+        this.draggable=false;
     }   
 }
 
@@ -99,19 +100,21 @@ class Controller{
         );
         
         this.view.mainDiv.addEventListener("mousedown",(e)=>{
-            var target=e.target;
+            var target=e.target;            
             this.drag=!this.drag;
-            if (target.className=='noteDiv') {
-                
-                window.addEventListener('mousemove',(e)=>{
-                    if (this.drag) {
-                        this.moveNote(target.id,e.x,e.y);
-                        console.log(e.x," ",e.y);
-                    }                    
-                })
-            }
+            this.arrNotes.forEach(note => {
+                note.draggable=false;
+                if(note.id==target.id){
+                    note.draggable=true;
+                    document.getElementById(note.id).addEventListener('mousemove',(e)=>{
+                        if (this.drag&&note.draggable) {
+                            this.moveNote(target.id,e.clientX,e.clientY);                        
+                        }                    
+                    })
+                }
+            });            
         })
-        this.view.mainDiv.addEventListener("mouseup",()=>{            
+        window.addEventListener("mouseup",()=>{            
             this.drag=false; 
         });
     }
@@ -188,8 +191,8 @@ class Controller{
     moveNote(id,x,y){
         let note=document.getElementById(id);
         note.style.position='absolute';
-        note.style.left=x+'px';
-        note.style.top=y+'px';
+        note.style.left=(x-50)+'px';
+        note.style.top=(y-160)+'px';
     }
 
     checkTime(){
@@ -214,9 +217,9 @@ class Controller{
 
 }
 
-   const c =new Controller();
+   
 window.addEventListener('load', () => {
-    
+    const c =new Controller();
     c.loadNotes();
     c.checkTime();   
     
@@ -226,10 +229,6 @@ window.addEventListener('load', () => {
     
 });
 
-
-//c.createNote('MIGUEL','JAJAJA');
-//c.addEvents();
-//window.setInterval( () => {c.addEvents()}, 1000);
 
 /*
 En ella debes permitir:
