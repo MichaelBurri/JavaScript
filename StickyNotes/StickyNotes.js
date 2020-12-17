@@ -92,28 +92,24 @@ class Controller{
     constructor(){
         this.arrNotes=[];
         this.view=new NoteView();
-        this.drag=false;
+        this.drag=false;        
         document.getElementById('bNew').addEventListener('click',(e)=>{
             this.createNote('Title','Write something here...')
         }        
         );
-        
-        this.view.mainDiv.addEventListener("mousedown",(e)=>{
-            var target=e.target;
-            this.drag=!this.drag;
-            if (target.className=='noteDiv') {
-                
-                window.addEventListener('mousemove',(e)=>{
-                    if (this.drag) {
-                        this.moveNote(target.id,e.x,e.y);
-                        console.log(e.x," ",e.y);
-                    }                    
-                })
-            }
-        })
+
+        this.view.mainDiv.addEventListener("mousedown", (e) => {            
+            this.target=e.target;
+            this.drag = true;
+        });
         this.view.mainDiv.addEventListener("mouseup",()=>{            
             this.drag=false; 
         });
+        if(this.drag){
+            document.getElementById(this.target.id).addEventListener('mousemove',console.log('noice'));
+        }
+                                
+        
     }
     createNote(title, text, time, id,save=true){
         let note=new Note(title,text,time,id);
@@ -187,9 +183,9 @@ class Controller{
 
     moveNote(id,x,y){
         let note=document.getElementById(id);
-        note.style.position='absolute';
-        note.style.left=x+'px';
-        note.style.top=y+'px';
+        note.style.position='relative';
+        note.style.left=(x-60)+'px';
+        note.style.top=(y-160)+'px';
     }
 
     checkTime(){
